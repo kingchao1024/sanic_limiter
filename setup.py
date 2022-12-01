@@ -17,7 +17,7 @@ DESCRIPTION = 'Limiter for Sanic.'
 URL = 'https://github.com/kingchao1024/sanic_limiter'
 EMAIL = 'kingchao1024@gmail.com'
 AUTHOR = 'kingchao'
-REQUIRES_PYTHON = '>=3.7.0'
+REQUIRES_PYTHON = '>=3.7'
 VERSION = '0.0.7'
 
 # What packages are required for this module to be executed?
@@ -25,7 +25,6 @@ REQUIRED = [
     # 'requests', 'maya', 'records',
     "aioredis==2.0.1",
     "sanic==22.9.1",
-    "setuptools==65.5.0"
 ]
 
 # What packages are optional?
@@ -121,11 +120,11 @@ setup(
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python',
+        # 'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
+        # 'Programming Language :: Python :: Implementation :: PyPy'
     ],
     # $ setup.py publish support.
     cmdclass={
