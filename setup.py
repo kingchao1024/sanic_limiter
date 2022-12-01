@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'sanic_limiter'
+NAME = 'limiter_for_sanic'
 DESCRIPTION = 'Limiter for Sanic.'
 URL = 'https://github.com/kingchao1024/sanic_limiter'
 EMAIL = 'kingchao1024@gmail.com'
@@ -107,7 +107,7 @@ setup(
     url=URL,
     # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['sanic_limiter'],
+    py_modules=['limiter_for_sanic'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
@@ -123,7 +123,7 @@ setup(
         # 'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: Implementation :: CPython',
+        # 'Programming Language :: Python :: Implementation :: CPython',
         # 'Programming Language :: Python :: Implementation :: PyPy'
     ],
     # $ setup.py publish support.
