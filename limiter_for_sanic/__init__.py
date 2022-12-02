@@ -10,7 +10,16 @@ from .bulk import key_func_g, Sanic, once, pop, purge_tasks, RateLimitExceeded, 
 
 
 class CounterSildeWindowLimiter:
-    def __init__(self, app: Sanic=None, key_func=key_func_g, windowSize: int=1000, splitNum: int=5, limit: int=5) -> None:
+    def __init__(self, app: Sanic=None, key_func=key_func_g, windowSize: int=1000, splitNum: int=5, limit: int=5):
+        """CounterSildeWindowLimiter Init
+
+        Args:
+            app (Sanic, optional): A Sanic app. Defaults to None.
+            key_func (_type_, optional): Key to generate limiter for interface. Defaults to key_func_g.
+            windowSize (int, optional): Window size (sliding window time length in milliseconds). Defaults to 1000.
+            splitNum (int, optional): Number of small windows. Defaults to 5.
+            limit (int, optional): Number of requests limited by widget. Defaults to 5.
+        """
         self._app = app
         self._key_func = key_func
         self._windowSize = windowSize
@@ -24,6 +33,11 @@ class CounterSildeWindowLimiter:
             self.init_app(app)
 
     def init_app(self, app: Sanic):
+        """register application
+
+        Args:
+            app (Sanic): A Sanic app.
+        """
         self._app = app
         self._app_name = app.name
         setattr(app.ctx, 'limiter', self)

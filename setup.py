@@ -18,7 +18,7 @@ URL = 'https://github.com/kingchao1024/sanic_limiter'
 EMAIL = 'kingchao1024@gmail.com'
 AUTHOR = 'kingchao'
 REQUIRES_PYTHON = '>=3.7'
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -105,9 +105,9 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['limiter_for_sanic'],
+    # py_modules=['limiter_for_sanic'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
