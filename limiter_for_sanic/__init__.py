@@ -2,6 +2,7 @@ from re import split
 from sanic import Request
 from sanic.log import logger
 from functools import wraps
+from aioredis import from_url
 from aioredis.lock import Lock
 from aioredis.client import Pipeline
 from .bulk import key_func_g, Sanic, once, pop, purge_tasks, RateLimitExceeded, Redis, client_list
@@ -45,6 +46,9 @@ class CounterSildeWindowLimiter:
         @app.after_server_start
         async def aio_limiter_configure(_app: Sanic):
             logger.debug("[sanic-limiter] connecting")
+            if not hasattr(_app.ctx, 'redis'):
+                redis = await from_url(app.config.get('REDIS'))
+                setattr(_app.ctx, 'redis', redis)
             self._redis: Redis = _app.ctx.redis
             self._lock = self._redis.lock(f"lock_{self._app_name}")
             setattr(_app.ctx, 'redis_flag', dict({'purge_tasks': True}))

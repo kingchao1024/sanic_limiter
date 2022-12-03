@@ -1,5 +1,10 @@
 # sanic_limiter
 
+## Sources
+```shell
+git clone https://github.com/kingchao1024/sanic_limiter.git
+```
+
 ## Install (Python 3.7+)
 ```shell
 pip install limiter-for-sanic
@@ -14,11 +19,15 @@ Quickstart
 Demo for quickstart:
 ```python
 from sanic import Sanic
+from aioredis import from_url
 from sanic.response import text
 from limiter_for_sanic import CounterSildeWindowLimiter
 
 app = Sanic(__name__)
-limiter = CounterSildeWindowLimiter()
+app.config['REDIS'] = 'redis://locahost'
+# or
+# setattr(app.ctx, 'redis', await from_url('redis://locahost'))
+limiter = CounterSildeWindowLimiter(app)
 
 @app.get('/')
 @limiter.limit()
@@ -30,8 +39,6 @@ app.run(host="0.0.0.0", port=5000, dev=True)
 
 Points Used
 ===========
-```
-Redis transactions
-Redis list
-Sanic background tasks
-```
+- Redis transactions
+- Redis list
+- Sanic background tasks
