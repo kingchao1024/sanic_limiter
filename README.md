@@ -1,5 +1,11 @@
 # sanic_limiter
 
+## Require
+```
+Python 3.7+
+Redis
+```
+
 ## Sources
 ```shell
 git clone https://github.com/kingchao1024/sanic_limiter.git
@@ -39,6 +45,7 @@ app.run(host="0.0.0.0", port=5000, dev=True)
 
 Points Used
 ===========
-- Redis transactions
+- Redis lua
 - Redis list
 - Sanic background tasks
+- ~~Redis transactions~~

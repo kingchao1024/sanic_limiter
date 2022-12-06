@@ -18,7 +18,7 @@ URL = 'https://github.com/kingchao1024/sanic_limiter'
 EMAIL = 'kingchao1024@gmail.com'
 AUTHOR = 'kingchao'
 REQUIRES_PYTHON = '>=3.7'
-VERSION = '0.0.8'
+VERSION = '0.1.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [

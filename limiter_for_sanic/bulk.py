@@ -3,6 +3,7 @@ from sanic.log import logger
 from asyncio import sleep
 from aioredis import Redis
 from aioredis.client import Pipeline
+from .lua import transaction
 from .errors import RateLimitExceeded
 
 
@@ -41,7 +42,9 @@ async def pop(app: Sanic, key: str, redis: Redis, recovery_frequency: float):
     while app.ctx.redis_flag[key]:
         await sleep(recovery_frequency)
         # logger.debug(f"pop {await redis.transaction(_pop, key)}")
-        ret = await redis.transaction(_pop)
+        # ret = await redis.transaction(_pop)
+
+        ret = await redis.evalsha(transaction['pop'], 1, key)
         logger.debug(f"pop {ret}") if ret else None
     await redis.close()
 
@@ -68,5 +71,9 @@ async def purge_tasks(app: Sanic, redis: Redis, windowSize: int):
             continue
         # keys = [key.decode() for key in await redis.smembers('purge_tasks')]
         # logger.debug(f"purge_tasks {await redis.transaction(_purge_tasks, *keys)}")
-        logger.debug(f"purge_tasks {await redis.transaction(_purge_tasks)}")
+        # ret = await redis.transaction(_purge_tasks)
+
+        ret = await redis.evalsha(transaction['purge_tasks'], 0)
+        [redis_flag.update({key.decode(): False}) for key in ret]
+        logger.debug(f"purge_tasks {ret}") if ret else None
     await redis.close()

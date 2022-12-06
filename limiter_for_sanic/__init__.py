@@ -5,7 +5,7 @@ from functools import wraps
 from aioredis import from_url
 from aioredis.lock import Lock
 from aioredis.client import Pipeline
-from .bulk import key_func_g, Sanic, once, pop, purge_tasks, RateLimitExceeded, Redis, client_list
+from .bulk import key_func_g, Sanic, once, pop, purge_tasks, RateLimitExceeded, Redis, client_list, transaction
 
 
 
@@ -52,8 +52,13 @@ class CounterSildeWindowLimiter:
             self._redis: Redis = _app.ctx.redis
             self._lock = self._redis.lock(f"lock_{self._app_name}")
             setattr(_app.ctx, 'redis_flag', dict({'purge_tasks': True}))
+            
             app.add_task(purge_tasks(_app, self._redis.client(), self._windowSize), name='purge_tasks')
             app.add_task(client_list(self._redis, _app.ctx.redis_flag, _app), name='client_list')
+            
+            await self._redis.script_flush()
+            [transaction.update({key: str(await self._redis.script_load(transaction[key]))}) for key in set(transaction.keys())]
+            # logger.debug(transaction)
 
         @app.before_server_stop
         async def close_limiter(_app: Sanic):
@@ -80,14 +85,26 @@ class CounterSildeWindowLimiter:
                 #     self._app.add_task(pop(key, self._redis, self._recovery_frequency), name=key)
                 # await self._redis.sadd('purge_tasks', key)
                 # await self._lock.release()
-                async def _once(pipe: Pipeline):
-                    if not self._app.get_task(key, raise_exception=False):
-                        self._app.ctx.redis_flag[key] = True
-                        self._app.add_task(pop(self._app, key, self._redis.client(), self._recovery_frequency), name=key)
-                    await once(key, self._redis, self._limit, self._splitNum)
-                    await pipe.sadd('purge_tasks', key)
-                # logger.debug(f"once {await self._redis.transaction(_once, key)}")
-                logger.debug(f"once {await self._redis.transaction(_once)}")
+                
+                # async def _once(pipe: Pipeline):
+                #     if not self._app.get_task(key, raise_exception=False):
+                #         self._app.ctx.redis_flag[key] = True
+                #         self._app.add_task(pop(self._app, key, self._redis.client(), self._recovery_frequency), name=key)
+                #     await once(key, self._redis, self._limit, self._splitNum)
+                #     await pipe.sadd('purge_tasks', key)
+                # # logger.debug(f"once {await self._redis.transaction(_once, key)}")
+                # logger.debug(f"once {await self._redis.transaction(_once)}")
+                
+                if not self._app.get_task(key, raise_exception=False):
+                    self._app.ctx.redis_flag[key] = True
+                    self._app.add_task(pop(self._app, key, self._redis.client(), self._recovery_frequency), name=key)
+                
+                ret = await self._redis.evalsha(transaction['once'], 1, *[key, self._limit, self._splitNum])
+                logger.debug(f"once {key} {ret}")
+                
+                if not ret:
+                    raise RateLimitExceeded()
+                
                 return await func(request, *args, **kwargs)
             return _inner
         return _outer
