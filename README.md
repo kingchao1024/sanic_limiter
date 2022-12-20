@@ -27,13 +27,13 @@ Demo for quickstart:
 from sanic import Sanic
 from aioredis import from_url
 from sanic.response import text
-from limiter_for_sanic import CounterSildeWindowLimiter
+from limiter_for_sanic import ComplexLimiter
 
 app = Sanic(__name__)
 app.config['REDIS'] = 'redis://locahost'
 # or
 # setattr(app.ctx, 'redis', await from_url('redis://locahost'))
-limiter = CounterSildeWindowLimiter(app)
+limiter = ComplexLimiter(app)
 
 @app.get('/')
 @limiter.limit()

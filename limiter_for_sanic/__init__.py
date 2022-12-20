@@ -10,9 +10,9 @@ from .bulk import key_func_g, Sanic, once, pop, purge_tasks, RateLimitExceeded, 
 
 
 
-class CounterSildeWindowLimiter:
+class ComplexLimiter:
     def __init__(self, app: Sanic=None, key_func=key_func_g, windowSize: int=1000, splitNum: int=5, limit: int=5):
-        """CounterSildeWindowLimiter Init
+        """ComplexLimiter Init
 
         Args:
             app (Sanic, optional): A Sanic app. Defaults to None.
